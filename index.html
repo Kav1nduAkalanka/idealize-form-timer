@@ -5,19 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Idealize Quiz - Gateway</title>
         <style>
-            body { margin: 0; font-family: system-ui, sans-serif; display: flex; flex-direction: column; height: 100vh; background-color: #e5e5f7; background-image: repeating-radial-
-  gradient(circle at 0 0, transparent 0, #e5e5f7 10px), repeating-linear-gradient(#ececf855, #ececf8); overflow: hidden; }
-            #timer-bar { background: #1e293b; color: white; padding: 15px; text-align: center; font-size: 1.5rem; font-weight: bold; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0,0,0,
-  0.1); transition: background 0.3s ease; display: none; }
+            body { margin: 0; font-family: system-ui, sans-serif; display: flex; flex-direction: column; height: 100vh; background-color: #e5e5f7; background-image: repeating-
+  radial-gradient(circle at 0 0, transparent 0, #e5e5f7 10px), repeating-linear-gradient(#ececf855, #ececf8); overflow: hidden; }
+            #timer-bar { background: #1e293b; color: white; padding: 15px; text-align: center; font-size: 1.5rem; font-weight: bold; z-index: 100; box-shadow: 0 4px 6px -1px
+  rgba(0,0,0,0.1); transition: background 0.3s ease; display: none; }
             #timer-bar.warning { background: #ef4444; }
-            #form-container { flex-grow: 1; width: 100%; max-width: 850px; margin: 20px auto; background: #ffffff; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow-
-  y: auto; display: none; }
+            #form-container { flex-grow: 1; width: 100%; max-width: 850px; margin: 20px auto; background: #ffffff; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  overflow-y: auto; display: none; }
             iframe { width: 100%; height: 100%; border: none; display: block; }
-            .status-screen { display: flex; text-align: center; padding: 50px; flex-grow: 1; flex-direction: column; justify-content: center; align-items: center; background-color:
-  rgba(255,255,255,0.9); margin: 20px auto; max-width: 600px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+            .status-screen { display: flex; text-align: center; padding: 50px; flex-grow: 1; flex-direction: column; justify-content: center; align-items: center; background-
+  color: rgba(255,255,255,0.9); margin: 20px auto; max-width: 600px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
             .status-screen h1 { color: #0f172a; font-size: 2.5rem; margin-bottom: 10px; }
-            .gateway-btn { padding: 12px 24px; font-size: 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition:
-  background 0.2s, opacity 0.2s; margin-top: 20px; }
+            .gateway-btn { padding: 12px 24px; font-size: 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+  transition: background 0.2s, opacity 0.2s; margin-top: 20px; }
             .gateway-btn:hover { background: #1d4ed8; }
             .gateway-btn:disabled { opacity: 0.6; cursor: not-allowed; }
             .gateway-error { color: #dc2626; font-weight: 600; margin-top: 14px; min-height: 1.2em; }
@@ -84,13 +84,7 @@
                 const openTime = new Date(CONFIG.openDate);
                 const closeTime = new Date(CONFIG.closeDate);
     
-                // Local device check to prevent accidental refresh attempts
-                if (localStorage.getItem('idealize_quiz_completed')) {
-                    document.getElementById('status-title').textContent = "Quiz Completed";
-                    document.getElementById('status-message').style.display = 'none';
-                    document.getElementById('blocked-ui').style.display = 'block';
-                    return;
-                }
+                // (Anti-cheat check removed to allow page reloads during Google Login)
     
                 if (now < openTime) {
                     document.getElementById('status-title').textContent = "Not Yet Open";
@@ -151,8 +145,7 @@
                     return;
                 }
     
-                // Save completion status
-                localStorage.setItem('idealize_quiz_completed', 'true');
+                // (Completion status saving removed)
     
                 // Show form and timer
                 document.getElementById('status-display').style.display = 'none';
@@ -168,23 +161,23 @@
                     separator +
                     'embedded=true&' +
                     CONFIG.formEntryId + '=' + encodeURIComponent(sessionId);
-    
+
                 // Start countdown
                 runClock(calculatedDuration);
             }
-    
+
             function runClock(durationInSeconds) {
                 let timer = durationInSeconds;
                 const timeDisplay = document.getElementById('time');
                 const timerBar = document.getElementById('timer-bar');
-    
+
                 const interval = setInterval(() => {
                     let minutes = parseInt(timer / 60, 10);
                     let seconds = parseInt(timer % 60, 10);
                     timeDisplay.textContent = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    
+
                     if (timer <= 300) timerBar.classList.add('warning');
-    
+
                     if (--timer < 0) {
                         clearInterval(interval);
                         document.getElementById('form-container').style.display = 'none';
